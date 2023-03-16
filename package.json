@@ -1,0 +1,19 @@
+{
+  "name": "studentmanagement",
+  "version": "1.0.0",
+  "description": "quan ly hoc sinh",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./src/index.js",
+    "dev": "nodemon --inspect ./src/index.js"
+  },
+  "author": "Dang Phuc",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  }
+}
