@@ -1,44 +1,53 @@
-const getInfoStudent = async (id, studentList) => {
-  const indexStudent = await studentList.findIndex((student) => {
-    return id == student.id;
+// import mmodel
+const { Student } = require("../app/models");
+//import Error
+
+const getAllStudent = () => {
+  return new Promise(async (resolve, reject) => {
+    const students = await Student.findAll();
+    resolve(students);
   });
-  if (indexStudent !== -1) {
-    student = studentList[indexStudent];
-    return student;
-  } else {
-    return false;
-  }
 };
 
-const createStudent = (student) => {
-  const newStudent = {
-    id: Math.random(),
-    ...student,
-  };
+const getInfoStudent = (id) => {
+  return new Promise(async (resolve, reject) => {
+    const student = await Student.findOne({
+      where: {
+        id,
+      },
+    });
+    resolve(student);
+  });
+};
+
+const createStudent = async (student) => {
+  const newStudent = await Student.create(student);
   return newStudent;
 };
 
-const updateStudent = (id, age, fullName, numberClass, studentList) => {
-  const indexStudent = studentList.findIndex((student) => student.id == id);
-  if (indexStudent !== -1) {
-    const oldStudent = studentList[indexStudent];
-    const updatedStudent = { ...oldStudent, age, fullName, numberClass };
-    studentList[indexStudent] = updatedStudent;
-    return updatedStudent;
-  } else {
-    return false;
-  }
+const updateStudent = (id, student) => {
+  return new Promise(async (resolve, reject) => {
+    const updatedStudent = await Student.update(
+      { ...student },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    resolve(updatedStudent.toString());
+  });
 };
 
-const deleteStudent = (id, studentList) => {
-  const indexStudent = studentList.findIndex((student) => student.id == id);
-  if (indexStudent !== -1) {
-    const deletedStudent = studentList[indexStudent];
-    studentList.splice(indexStudent, 1);
-    return deletedStudent;
-  } else {
-    return false;
-  }
+const deleteStudent = (id) => {
+  return new Promise(async (resolve, reject) => {
+    const statusDelete = await Student.destroy({
+      where: {
+        id,
+      },
+    });
+    resolve(statusDelete);
+  });
 };
 
 module.exports = {
@@ -46,4 +55,5 @@ module.exports = {
   createStudent,
   updateStudent,
   deleteStudent,
+  getAllStudent,
 };

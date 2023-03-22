@@ -1,65 +1,63 @@
-let studentList = require("../../utils/studentList");
 const {
   getInfoStudent,
   createStudent,
   updateStudent,
   deleteStudent,
+  getAllStudent,
 } = require("../../services/studentServices");
-
+const ApiError = require("../../utils/handleError");
 class studentController {
-  index(req, res) {
-    res.status(200).send(studentList);
+  async index(req, res, next) {
+    const students = await getAllStudent();
+    console.log(JSON.stringify(students));
+    if (students.length >= 1) {
+      res.status(200).json(students);
+    } else {
+      res.status(404).json({ msg: "Not Found !" });
+    }
   }
 
-  async show(req, res) {
+  async show(req, res, next) {
     let id = req.params.id;
-    const student = await getInfoStudent(id, studentList);
+    const student = await getInfoStudent(id);
     console.log(student);
     if (!student) {
-      res.status(404).send("Not Found !");
+      res.status(404).json({ msg: "Not Found !" });
     } else {
       res.status(200).send(student);
     }
   }
 
-  create(req, res) {
+  async create(req, res, next) {
     let student = req.body;
-    const newStudent = createStudent(student);
+    const newStudent = await createStudent(student);
     if (newStudent) {
-      // res.status(201).send(`Thêm thành công sinh viên ${respone.fullName}`);
-      studentList = [...studentList, newStudent];
       return res
         .status(201)
         .send(`Thêm thành công sinh viên ${newStudent.fullName}`);
     } else {
-      res.send("Có lổi khi thêm");
+      res.status(500).json({ msg: "An Error hap}pend while create student !" });
     }
   }
 
-  update(req, res) {
+  async update(req, res, next) {
     const { id } = req.params;
-    let { age, fullName, numberClass } = req.body;
-    const updatedStudent = updateStudent(
-      id,
-      age,
-      fullName,
-      numberClass,
-      studentList
-    );
-    if (updatedStudent) {
+    let student = req.body;
+    const updatedStudent = await updateStudent(id, student);
+    if (updatedStudent == 1) {
       res.send(`Sửa Thông tin của student có id là ${id}`);
     } else {
-      res.send("Not found !");
+      res.status(404).json({ msg: "Not Found !" });
     }
   }
 
-  delete(req, res) {
+  async delete(req, res, next) {
     const { id } = req.params;
-    const deletedStudent = deleteStudent(id, studentList);
-    if (deletedStudent) {
-      res.send(`Delete student ${deletedStudent.fullName} have id : ${id}`);
+    const statusDelete = await deleteStudent(id);
+    if (statusDelete) {
+      res.send(`Delete student  have id : ${id}`);
     } else {
-      res.send("Not found!");
+      res.status(404).json({ msg: "Not Found !" });
     }
   }
 }
